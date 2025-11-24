@@ -1,0 +1,408 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirQuality AI - Post Graduate Research Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-wind"></i>
+                <span>AirQuality AI</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#analysis" class="nav-link">Research</a>
+                <a href="#predict" class="nav-link">Predict</a>
+                <a href="#data" class="nav-link">Data</a>
+                <a href="#map" class="nav-link">Global Map</a>
+                <a href="#about" class="nav-link">About</a>
+                <div class="nav-auth" id="navAuth">
+                    <button class="btn-login" onclick="showLoginModal()">Login</button>
+                    <button class="btn-signup" onclick="showRegisterModal()">Sign Up</button>
+                </div>
+                <div class="nav-user" id="navUser" style="display: none;">
+                    <span id="userName"></span>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Advanced Air Quality Prediction & Health Impact Analysis</h1>
+                <p class="hero-subtitle">Post Graduate Research Platform featuring Machine Learning, Deep Learning, and Real-time Analytics</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number" id="totalPredictions">0</span>
+                        <span class="stat-label">Predictions Made</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="modelCount">0</span>
+                        <span class="stat-label">ML Models</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="citiesCovered">0</span>
+                        <span class="stat-label">Cities Covered</span>
+                    </div>
+                </div>
+                <button class="cta-button" onclick="scrollToSection('predict')">
+                    Start Predicting <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="hero-visual">
+                <div id="heroChart"></div>
+            </div>
+        </section>
+
+        <!-- Research Analysis Section -->
+        <section id="analysis" class="analysis-section">
+            <div class="container">
+                <h2>Research & Methodology</h2>
+                <div class="research-grid">
+                    <div class="research-card">
+                        <i class="fas fa-brain"></i>
+                        <h3>Machine Learning</h3>
+                        <p>10+ algorithms including Random Forest, XGBoost, and Neural Networks</p>
+                    </div>
+                    <div class="research-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Time Series Analysis</h3>
+                        <p>LSTM, GRU, and CNN models for temporal pattern recognition</p>
+                    </div>
+                    <div class="research-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Health Impact</h3>
+                        <p>WHO-compliant health risk assessment and recommendations</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prediction Interface -->
+        <section id="predict" class="prediction-section">
+            <div class="container">
+                <h2>Air Quality Prediction</h2>
+                <div class="prediction-container">
+                    <div class="prediction-form">
+                        <h3>Input Parameters</h3>
+                        <div class="form-info">
+                            <p>⚠️ All fields are required for accurate predictions</p>
+                            <span class="required-fields">8 Input Parameters Required (PM2.5 will be predicted)</span>
+                        </div>
+                        <form id="predictionForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="citySelect">City (50+ Available)<span class="required">*</span></label>
+                                    <select id="citySelect" name="city" required>
+                                        <option value="">Select a city...</option>
+                                    </select>
+                                    <small>Select from 50+ major cities worldwide</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="countrySelect">Country<span class="required">*</span></label>
+                                    <input type="text" id="countrySelect" name="country" readonly required>
+                                    <small>Auto-populated when city is selected</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pm25">PM2.5 (µg/m³) - <em>Predicted Output</em><span class="required">*</span></label>
+                                    <input type="number" id="pm25" name="pm25" step="0.1" min="0" placeholder="e.g., 35" required disabled style="opacity: 0.6; cursor: not-allowed;">
+                                    <small>This is the target variable - the API predicts this value based on other inputs. You can enter a reference value to compare against predictions.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pm10">PM10 (µg/m³)<span class="required">*</span></label>
+                                    <input type="number" id="pm10" name="pm10" step="0.1" min="0" placeholder="e.g., 60" required>
+                                    <small>Coarse particulate matter</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="no2">NO2 (µg/m³)<span class="required">*</span></label>
+                                    <input type="number" id="no2" name="no2" step="0.1" min="0" placeholder="e.g., 25" required>
+                                    <small>Nitrogen Dioxide</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="so2">SO2 (µg/m³)<span class="required">*</span></label>
+                                    <input type="number" id="so2" name="so2" step="0.1" min="0" placeholder="e.g., 10" required>
+                                    <small>Sulfur Dioxide</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="co">CO (mg/m³)<span class="required">*</span></label>
+                                    <input type="number" id="co" name="co" step="0.1" min="0" placeholder="e.g., 1.5" required>
+                                    <small>Carbon Monoxide</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="o3">O3 (µg/m³)<span class="required">*</span></label>
+                                    <input type="number" id="o3" name="o3" step="0.1" min="0" placeholder="e.g., 50" required>
+                                    <small>Ozone</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="temperature">Temperature (°C)<span class="required">*</span></label>
+                                    <input type="number" id="temperature" name="temperature" step="0.1" placeholder="e.g., 5" required>
+                                    <small>Ambient temperature</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="humidity">Humidity (%)<span class="required">*</span></label>
+                                    <input type="number" id="humidity" name="humidity" step="0.1" min="0" max="100" placeholder="e.g., 80" required>
+                                    <small>Relative humidity (0-100)</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="windSpeed">Wind Speed (m/s)<span class="required">*</span></label>
+                                    <input type="number" id="windSpeed" name="wind_speed" step="0.1" min="0" placeholder="e.g., 8" required>
+                                    <small>Surface wind speed</small>
+                                </div>
+                            </div>
+                            
+                            <div class="model-info" style="background: #e3f2fd; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+                                <h4 style="margin-top: 0;">Model Information</h4>
+                                <p><strong>Model:</strong> Stacking Ensemble with Ridge Meta-Learner</p>
+                                <p><strong>Features:</strong> 173 engineered (temporal, lag, rolling, interactions)</p>
+                                <p><strong>Base Models:</strong> SVM Linear, Ridge, Lasso, Linear Regression + others</p>
+                            </div>
+                            
+                            <button type="submit" class="btn-predict" id="predictBtn">
+                                <i class="fas fa-calculator"></i>
+                                Generate Predictions
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="prediction-results">
+                        <h3>Prediction Results</h3>
+                        <div id="resultsContainer" class="results-container">
+                            <div class="placeholder-results">
+                                <i class="fas fa-chart-bar"></i>
+                                <p>Submit prediction to see results and model comparisons</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Map Section -->
+        <section id="map" class="map-section">
+            <div class="container">
+                <h2>Global Air Quality Map</h2>
+                <div class="map-controls">
+                    <div class="map-legend" id="mapLegend"></div>
+                    <div class="map-filters">
+                        <select id="pollutantFilter">
+                            <option value="pm25">PM2.5</option>
+                            <option value="pm10">PM10</option>
+                            <option value="no2">NO2</option>
+                        </select>
+                        <input type="date" id="dateFilter">
+                    </div>
+                </div>
+                <div id="globalMap" class="global-map"></div>
+            </div>
+        </section>
+
+        <!-- Data Explorer Section -->
+        <section id="data" class="data-section">
+            <div class="container">
+                <h2>Data Explorer</h2>
+                <div class="data-tabs">
+                    <button class="tab-btn active" onclick="openTab('trainingData')">Training Data</button>
+                    <button class="tab-btn" onclick="openTab('predictionHistory')">Prediction History</button>
+                    <button class="tab-btn" onclick="openTab('publicPredictions')">Public Predictions</button>
+                </div>
+                
+                <div id="trainingData" class="tab-content active">
+                    <div class="data-table-container">
+                        <table id="trainingDataTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>City</th>
+                                    <th>Country</th>
+                                    <th>Date</th>
+                                    <th>PM2.5</th>
+                                    <th>PM10</th>
+                                    <th>NO2</th>
+                                    <th>SO2</th>
+                                    <th>CO</th>
+                                    <th>O3</th>
+                                    <th>Temperature</th>
+                                    <th>Humidity</th>
+                                    <th>Wind Speed</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trainingDataBody">
+                                <!-- Dynamically populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="predictionHistory" class="tab-content">
+                    <div id="userPredictionsContainer">
+                        <!-- User predictions will be loaded here -->
+                    </div>
+                </div>
+                
+                <div id="publicPredictions" class="tab-content">
+                    <div id="publicPredictionsContainer">
+                        <!-- Public predictions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feedback Section -->
+        <section id="feedback" class="feedback-section">
+            <div class="container">
+                <h2>Research Feedback</h2>
+                <div class="feedback-container">
+                    <div class="feedback-form">
+                        <h3>Submit Feedback</h3>
+                        <form id="feedbackForm">
+                            <div class="form-group">
+                                <label for="predictionSelect">Select Prediction</label>
+                                <select id="predictionSelect" required>
+                                    <option value="">Select a prediction</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="feedbackRating">Overall Rating</label>
+                                <div class="rating-stars">
+                                    <span class="star" data-rating="1">★</span>
+                                    <span class="star" data-rating="2">★</span>
+                                    <span class="star" data-rating="3">★</span>
+                                    <span class="star" data-rating="4">★</span>
+                                    <span class="star" data-rating="5">★</span>
+                                </div>
+                                <input type="hidden" id="feedbackRating" name="rating" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelAccuracy">Model Accuracy</label>
+                                <select id="modelAccuracy" name="model_accuracy" required>
+                                    <option value="1">Very Poor</option>
+                                    <option value="2">Poor</option>
+                                    <option value="3">Average</option>
+                                    <option value="4">Good</option>
+                                    <option value="5">Excellent</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="feedbackComments">Comments</label>
+                                <textarea id="feedbackComments" name="comments" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-submit">Submit Feedback</button>
+                        </form>
+                    </div>
+                    
+                    <div class="feedback-display">
+                        <h3>Recent Feedback</h3>
+                        <div id="feedbackList" class="feedback-list">
+                            <!-- Feedback items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Researcher Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn-login-modal">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Researcher Registration</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regFullName">Full Name</label>
+                    <input type="text" id="regFullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regAffiliation">Affiliation (Optional)</label>
+                    <input type="text" id="regAffiliation">
+                </div>
+                <button type="submit" class="btn-register-modal">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>AirQuality AI</h4>
+                    <p>Advanced Post Graduate Research Platform for Air Quality Prediction and Health Impact Analysis</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Research Areas</h4>
+                    <ul>
+                        <li>Machine Learning</li>
+                        <li>Environmental Science</li>
+                        <li>Public Health</li>
+                        <li>Data Analytics</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>ubongisaiahetim001@gmail.com</p>
+                    <p>+234 901 208 3959</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AirQuality AI Research Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/cities.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/prediction.js"></script>
+    <script src="js/predictions.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/feedback.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
