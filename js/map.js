@@ -21,9 +21,9 @@ class AirQualityMap {
         }).addTo(this.map);
 
         // Add Mapbox styles for better visualization (optional)
-        // L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token=${CONFIG.MAPBOX_ACCESS_TOKEN}`, {
-        //     attribution: '© Mapbox'
-        // }).addTo(this.map);
+        L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token=${CONFIG.MAPBOX_ACCESS_TOKEN}`, {
+            attribution: '© Mapbox'
+        }).addTo(this.map);
     }
 
     async loadMapData() {
