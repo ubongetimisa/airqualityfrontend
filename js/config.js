@@ -1,6 +1,6 @@
 // frontend/js/config.js
 const CONFIG = {
-    API_BASE_URL: 'http://localhost:8000',
+    API_BASE_URL: 'https://airqualitybackendgi2-241595181137.europe-west1.run.app',
     MAPBOX_ACCESS_TOKEN: 'your_mapbox_token_here', // Replace with actual token
     DEFAULT_MAP_CENTER: [20, 0],
     DEFAULT_MAP_ZOOM: 2
